@@ -29,3 +29,8 @@ module Awsomebooks
     config.api_only = true
   end
 end
+
+# Cria uma action chamada view que renderiza o arquivo index.html.erb 
+def index
+  render file: Rails.root.join('public', 'index.html')
+end
