@@ -3,6 +3,8 @@ import './App.css';
 import axios from 'axios';
 import React, { useState, useEffect, Component } from 'react';
 import BookContainer from './components/bookContaier';
+import { Button } from 'react-bootstrap';
+
 
 axios.defaults.baseURL = 'http://localhost:3000';
 
@@ -25,9 +27,8 @@ function App() {
     <div className="App">
         <BookContainer books={books} />
     </div>
-      <div>
-        <h1>Book Search</h1>
-        res
+      <div className="App">
+        <Button variant="primary" href="/addBook">Add Book</Button>
       </div>
     </>
   );

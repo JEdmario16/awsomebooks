@@ -12,7 +12,6 @@ function BookContainer(books) {
                     <span>{book.id}</span>
                 </div>
             ))}
-
         </div>
     )
 }
