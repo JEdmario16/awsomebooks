@@ -10,9 +10,7 @@ if ['development', 'test'].include? ENV['RAILS_ENV']
   Dotenv::Railtie.load
 end
 
-HOSTNAME = ENV['HOSTNAME']
-
-module Awsomebooks
+module Awsomebooks 
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 7.0
@@ -30,4 +28,9 @@ module Awsomebooks
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
   end
+end
+
+# Cria uma action chamada view que renderiza o arquivo index.html.erb 
+def index
+  render file: Rails.root.join('public', 'index.html')
 end
