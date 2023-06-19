@@ -12,3 +12,10 @@ WORKDIR /app
 ADD . /app
 RUN gem install bundler -v 2.3.7
 RUN bundle install
+
+WORKDIR /app/client
+RUN npm install 
+RUN npm start 
+
+WORKDIR /app
+

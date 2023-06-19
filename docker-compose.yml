@@ -12,6 +12,7 @@ services:
       - bundle_cache:/usr/local/bundle
     ports:
       - 3000:3000
+      - "4000:4000"
     networks:
       - app-network
     stdin_open: true
@@ -30,9 +31,10 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
-      - "5430:5432"
+      - "8080:5432"
     networks:
       - app-network
+    restart: always
 
   # Não implementamos o redis e o sidekiq ainda
   # redis:
