@@ -1,0 +1,100 @@
+version: '2'
+
+services:
+
+  client:
+    build:
+      context: ./client
+      dockerfile: dockerfile.client
+    image: awesomebooks-client
+    command: bash -c "npm install && npm run start"
+    volumes:
+      - ./client:/client
+    ports:
+      - "4000:4000"
+    networks:
+      - app-network
+
+  api:
+    build:
+      context: .
+      dockerfile: dockerfile.api
+    image: awesomebooks-api
+    # The command below will remove the pid file if it exists and then start the server
+    # This is necessary because the pid file is created when the server starts and if the container is stopped
+    # without removing the pid file, the server will not start again
+    command: bash -c "rm -f ./tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
+
+    # We also set bundle cache to a volume so that we can cache the gems and speed up the build process
+    volumes:
+      - .:/api
+      - bundle_cache:/usr/local/bundle
+    ports:
+      - 3000:3000
+    networks:
+      - app-network
+    stdin_open: true
+    tty: true
+    env_file:
+      - ${ENV_FILE:-.env}
+    depends_on:
+      - db
+
+  db:
+    image: postgres:13.2-alpine
+    container_name: awesomebooks-db
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "8080:5432"
+    networks:
+      - app-network
+    restart: always
+
+  # Não implementamos o redis e o sidekiq ainda
+  # redis:
+  #   image: redis:6.2.1-alpine
+  #   container_name: awesomebooks-redis
+  #   command: redis-server
+  #   volumes:
+  #     - redis_data:/data
+  #   ports:
+  #     - "6379:6379"
+  #   logging:
+  #     driver: none
+  #   networks:
+  #     - app-network
+
+  # sidekiq:
+  #   image: awesomebooks-app
+  #   container_name: awesomebooks-sidekiq
+  #   depends_on:
+  #     - db
+  #     - redis
+  #     - app
+  #   #mem_limit: 512m
+  #   volumes:
+  #     - .:/app
+  #     - bundle_cache:/usr/local/bundle
+  #   command: dotenv -f ".env.sidekiq" bundle exec sidekiq -C config/sidekiq.yml
+  #   networks:
+  #     - app-network
+    
+  mailcatcher:
+    image: dockage/mailcatcher:0.8.2
+    restart: on-failure
+    ports:
+      - "1080:1080"
+      - "1025:1025"    
+
+volumes:
+  pg_data:
+  #redis_data:
+  bundle_cache:
+
+networks:
+  app-network:
+    name: app-network
